@@ -2,12 +2,33 @@
 
 import json
 import openai
+from openai import OpenAIError
 
 
 def chat_completion(messages, model="gpt-3.5-turbo", **kwargs):
-    """Send a chat completion request."""
-    response = openai.ChatCompletion.create(model=model, messages=messages, **kwargs)
-    return response
+    """Send a chat completion request.
+
+    Parameters
+    ----------
+    messages : list
+        Chat messages to send to the API.
+    model : str, optional
+        The model name to use.
+
+    Returns
+    -------
+    Any
+        The API response object.
+
+    Raises
+    ------
+    RuntimeError
+        If the OpenAI API request fails.
+    """
+    try:
+        return openai.ChatCompletion.create(model=model, messages=messages, **kwargs)
+    except OpenAIError as exc:
+        raise RuntimeError(f"OpenAI API request failed: {exc}") from exc
 
 
 def generate_flyer(data: dict) -> dict:
@@ -55,7 +76,12 @@ def generate_flyer(data: dict) -> dict:
 
     messages = [{"role": "user", "content": prompt}]
 
-    response = chat_completion(messages)
+    try:
+        response = chat_completion(messages)
+    except RuntimeError:
+        # Propagate API errors to the caller
+        raise
+
     content = response["choices"][0]["message"]["content"]
 
     try:
