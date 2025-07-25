@@ -1,8 +1,13 @@
 """Utility for interacting with OpenAI's API."""
 
 import json
-import openai
-from openai import OpenAIError
+import os
+from dotenv import load_dotenv
+from openai import OpenAI, OpenAIError
+
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def chat_completion(messages, model="gpt-3.5-turbo", **kwargs):
@@ -26,7 +31,7 @@ def chat_completion(messages, model="gpt-3.5-turbo", **kwargs):
         If the OpenAI API request fails.
     """
     try:
-        return openai.ChatCompletion.create(model=model, messages=messages, **kwargs)
+        return client.chat.completions.create(model=model, messages=messages, **kwargs)
     except OpenAIError as exc:
         raise RuntimeError(f"OpenAI API request failed: {exc}") from exc
 
@@ -82,7 +87,7 @@ def generate_flyer(data: dict) -> dict:
         # Propagate API errors to the caller
         raise
 
-    content = response["choices"][0]["message"]["content"]
+    content = response.choices[0].message.content
 
     try:
         result = json.loads(content)
