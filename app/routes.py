@@ -27,7 +27,12 @@ def generate_flyer_route():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
-    result = generate_flyer({key: data[key] for key in required_fields})
+    try:
+        result = generate_flyer({key: data[key] for key in required_fields})
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 502
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
     return jsonify({
         "subject": result.get("subject", ""),
         "html_body": result.get("html_body", ""),
