@@ -45,3 +45,6 @@ pytest_cache/
 
 # Pytest cache
 .pytest_cache/
+
+#keys
+.env
