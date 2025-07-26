@@ -16,9 +16,28 @@ def index():
     return jsonify({'message': 'Hello, World!'})
 
 
+@app.route('/flyer-form')
+def flyer_form():
+    """Serve a simple HTML form for generating flyers."""
+    return render_template('flyer_form.html', message=None)
+
+
 @app.route('/generate-flyer', methods=['POST'])
 def generate_flyer():
-    data = request.get_json()
+    """Generate a flyer email from JSON or form data."""
+
+    if request.is_json:
+        data = request.get_json() or {}
+        from_form = False
+    else:
+        data = request.form.to_dict()
+        from_form = True
+
+    # Normalize features so it can be provided as a list or newline-delimited string
+    features_value = data.get('features', [])
+    if isinstance(features_value, str):
+        features_value = [f.strip() for f in features_value.splitlines() if f.strip()]
+    data['features'] = features_value
 
     # Extract fields
     address = data.get('address', '')
@@ -28,7 +47,7 @@ def generate_flyer():
     agent_phone = data.get('agent_phone', '')
     agent_email = data.get('agent_email', '')
 
-    recipient_email = data.get('recipient_email', '').strip()
+    recipient_email = data.get('recipient_email', '').strip() or agent_email.strip()
 
     html_body = data.get('html_body', '').strip()
     if not html_body:
@@ -63,7 +82,11 @@ def generate_flyer():
             server.login(smtp_email, smtp_password)
             server.sendmail(smtp_email, [recipient_email], msg.as_string())
 
+        if from_form:
+            return render_template('flyer_form.html', message='Email sent successfully')
         return jsonify({"status": "Email sent successfully", "subject": subject, "html_body": html_body}), 200
     except Exception as e:
+        if from_form:
+            return render_template('flyer_form.html', message=f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
