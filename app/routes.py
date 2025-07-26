@@ -28,20 +28,24 @@ def generate_flyer():
     agent_phone = data.get('agent_phone', '')
     agent_email = data.get('agent_email', '')
 
-    recipient_email = data.get('recipient_email')
+    recipient_email = data.get('recipient_email', '').strip()
 
-    # Render flyer using Jinja2
-    html_body = render_template(
-        'flyer_template.html',
-        address=address,
-        price=price,
-        features=features,
-        agent_name=agent_name,
-        agent_phone=agent_phone,
-        agent_email=agent_email
-    )
+    html_body = data.get('html_body', '').strip()
+    if not html_body:
+        # Render flyer using Jinja2 if not provided in the payload
+        html_body = render_template(
+            'flyer_template.html',
+            address=address,
+            price=price,
+            features=features,
+            agent_name=agent_name,
+            agent_phone=agent_phone,
+            agent_email=agent_email
+        )
 
-    subject = data.get('subject') or f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
+    subject = data.get('subject', '').strip()
+    if not subject:
+        subject = f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
 
     try:
         smtp_host = (os.getenv("SMTP_HOST") or "").strip()
