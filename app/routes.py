@@ -44,10 +44,10 @@ def generate_flyer():
     subject = data.get('subject') or f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
 
     try:
-        smtp_host = os.environ.get("SMTP_HOST")
-        smtp_port = int(os.environ.get("SMTP_PORT", 0))
-        smtp_email = os.environ.get("SMTP_EMAIL")
-        smtp_password = os.environ.get("SMTP_PASSWORD")
+        smtp_host = (os.getenv("SMTP_HOST") or "").strip()
+        smtp_port = int((os.getenv("SMTP_PORT") or "587").strip())
+        smtp_email = (os.getenv("SMTP_EMAIL") or "").strip()
+        smtp_password = (os.getenv("SMTP_PASSWORD") or "").strip()
 
         msg = MIMEText(html_body, "html")
         msg["Subject"] = subject
