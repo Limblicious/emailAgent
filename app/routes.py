@@ -1,5 +1,7 @@
 from flask import jsonify, request, render_template
 
+from .utils.mailer import send_flyer
+
 from . import app
 
 
@@ -32,5 +34,8 @@ def generate_flyer():
     )
 
     subject = f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
+    # Send the flyer silently using SMTP
+    send_flyer(subject, html_body)
+
     return jsonify({"subject": subject, "html_body": html_body})
 
