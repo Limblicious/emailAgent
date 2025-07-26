@@ -2,19 +2,25 @@
 <html>
 <head>
     <title>Generate Flyer</title>
+    <style>
+        .error { border-color: red; }
+        .error-message { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
-    {% if message %}
+    {% if error %}
+    <p class="error-message">{{ error }}</p>
+    {% elif message %}
     <p>{{ message }}</p>
     {% endif %}
     <form method="post" action="/generate-flyer">
-        <label>Address:<br><input type="text" name="address" required></label><br>
-        <label>Price:<br><input type="text" name="price" required></label><br>
-        <label>Features:<br><textarea name="features" rows="5"></textarea></label><br>
-        <label>Agent Name:<br><input type="text" name="agent_name" required></label><br>
-        <label>Agent Phone:<br><input type="text" name="agent_phone"></label><br>
-        <label>Agent Email:<br><input type="email" name="agent_email" required></label><br>
-        <label>Subject:<br><input type="text" name="subject"></label><br>
+        <label>Address:<br><input type="text" name="address" required value="{{ form_data.get('address', '') }}" class="{% if 'address' in error_fields %}error{% endif %}"></label><br>
+        <label>Price:<br><input type="text" name="price" required value="{{ form_data.get('price', '') }}" class="{% if 'price' in error_fields %}error{% endif %}"></label><br>
+        <label>Features:<br><textarea name="features" rows="5" required class="{% if 'features' in error_fields %}error{% endif %}">{{ form_data.get('features', '') }}</textarea></label><br>
+        <label>Agent Name:<br><input type="text" name="agent_name" required value="{{ form_data.get('agent_name', '') }}" class="{% if 'agent_name' in error_fields %}error{% endif %}"></label><br>
+        <label>Agent Phone:<br><input type="text" name="agent_phone" required value="{{ form_data.get('agent_phone', '') }}" class="{% if 'agent_phone' in error_fields %}error{% endif %}"></label><br>
+        <label>Agent Email:<br><input type="email" name="agent_email" required value="{{ form_data.get('agent_email', '') }}" class="{% if 'agent_email' in error_fields %}error{% endif %}"></label><br>
+        <label>Subject:<br><input type="text" name="subject" required value="{{ form_data.get('subject', '') }}" class="{% if 'subject' in error_fields %}error{% endif %}"></label><br>
         <button type="submit">Send Flyer</button>
     </form>
 </body>

@@ -20,7 +20,13 @@ def index():
 @app.route('/flyer-form')
 def flyer_form():
     """Serve a simple HTML form for generating flyers."""
-    return render_template('flyer_form.html', message=None)
+    return render_template(
+        'flyer_form.html',
+        message=None,
+        error=None,
+        form_data={},
+        error_fields=[]
+    )
 
 
 @app.route('/generate-flyer', methods=['POST'])
@@ -39,6 +45,18 @@ def generate_flyer():
     if isinstance(features_value, str):
         features_value = [f.strip() for f in features_value.splitlines() if f.strip()]
     data['features'] = features_value
+
+    if from_form:
+        required_fields = ['address', 'price', 'features', 'agent_name', 'agent_phone', 'agent_email', 'subject']
+        missing_fields = [f for f in required_fields if not data.get(f) or (f == 'features' and not features_value)]
+        if missing_fields:
+            return render_template(
+                'flyer_form.html',
+                error='Please fill out all fields.',
+                message=None,
+                error_fields=missing_fields,
+                form_data=data
+            )
 
     # Extract fields
     address = data.get('address', '')
@@ -84,10 +102,22 @@ def generate_flyer():
             server.sendmail(smtp_email, [recipient_email], msg.as_string())
 
         if from_form:
-            return render_template('flyer_form.html', message='Email sent successfully')
+            return render_template(
+                'flyer_form.html',
+                message='Email sent successfully',
+                error=None,
+                form_data={},
+                error_fields=[]
+            )
         return jsonify({"status": "Email sent successfully", "subject": subject, "html_body": html_body}), 200
     except Exception as e:
         if from_form:
-            return render_template('flyer_form.html', message=f"Error: {e}")
+            return render_template(
+                'flyer_form.html',
+                message=f"Error: {e}",
+                error=None,
+                form_data={},
+                error_fields=[]
+            )
         return jsonify({"error": str(e)}), 500
 
