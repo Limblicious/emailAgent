@@ -1,0 +1,18 @@
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2 style="color: #2e6da4;">🏠 New Listing Alert</h2>
+    <p><strong>📍 Address:</strong> {{ address }}</p>
+    <p><strong>💰 Price:</strong> {{ price }}</p>
+    <p><strong>✨ Features:</strong></p>
+    <ul>
+      {% for feature in features %}
+        <li>{{ feature }}</li>
+      {% endfor %}
+    </ul>
+    <p>For more information, contact:</p>
+    <p><strong>{{ agent_name }}</strong><br>
+    📞 {{ agent_phone }}<br>
+    📧 {{ agent_email }}</p>
+  </body>
+</html>
+

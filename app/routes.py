@@ -1,5 +1,4 @@
-from flask import jsonify, request
-from .utils.openai_client import generate_flyer
+from flask import jsonify, request, render_template
 
 from . import app
 
@@ -10,30 +9,28 @@ def index():
 
 
 @app.route('/generate-flyer', methods=['POST'])
-def generate_flyer_route():
-    """Generate an email flyer based on property details."""
-    data = request.get_json(silent=True) or {}
+def generate_flyer():
+    data = request.get_json()
 
-    required_fields = [
-        "address",
-        "price",
-        "features",
-        "agent_name",
-        "agent_phone",
-        "agent_email",
-    ]
+    # Extract fields
+    address = data.get('address', '')
+    price = data.get('price', '')
+    features = data.get('features', [])
+    agent_name = data.get('agent_name', '')
+    agent_phone = data.get('agent_phone', '')
+    agent_email = data.get('agent_email', '')
 
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"error": f"Missing field: {field}"}), 400
+    # Render flyer using Jinja2
+    html_body = render_template(
+        'flyer_template.html',
+        address=address,
+        price=price,
+        features=features,
+        agent_name=agent_name,
+        agent_phone=agent_phone,
+        agent_email=agent_email
+    )
 
-    try:
-        result = generate_flyer({key: data[key] for key in required_fields})
-    except RuntimeError as exc:
-        return jsonify({"error": str(exc)}), 502
-    except Exception:
-        return jsonify({"error": "Internal server error"}), 500
-    return jsonify({
-        "subject": result.get("subject", ""),
-        "html_body": result.get("html_body", ""),
-    })
+    subject = f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
+    return jsonify({"subject": subject, "html_body": html_body})
+
