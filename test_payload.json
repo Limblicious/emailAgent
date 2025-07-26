@@ -1,8 +1,0 @@
-{
-    "address": "123 Test St, Test City, TS",
-    "price": "$123,456",
-    "features": ["Pool", "Garage"],
-    "agent_name": "Agent Smith",
-    "agent_phone": "555-1234",
-    "agent_email": "agent@example.com"
-}
