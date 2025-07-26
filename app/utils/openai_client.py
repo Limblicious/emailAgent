@@ -2,12 +2,13 @@
 
 import json
 import os
-from dotenv import load_dotenv
 from openai import OpenAI, OpenAIError
 
-load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("Missing OPENAI_API_KEY environment variable")
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=api_key)
 
 
 def chat_completion(messages, model="gpt-3.5-turbo", **kwargs):

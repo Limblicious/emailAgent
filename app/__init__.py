@@ -1,12 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
-import os
 
-load_dotenv()  # loads variables from .env into os.environ
-
-# Now access it like:
-api_key = os.getenv("OPENAI_API_KEY")
+# Load environment variables from a .env file if present.
+load_dotenv()
 
 
 app = Flask(__name__)
