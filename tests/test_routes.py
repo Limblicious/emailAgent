@@ -21,12 +21,17 @@ def test_flyer_form_route():
 def test_generate_flyer_success():
     tester = app.test_client()
 
-    with open("test_payload.json") as f:
-        payload = json.load(f)
+    payload = {
+        "address": "123 Test St, Test City, TS",
+        "price": "$123,456",
+        "features": ["Pool", "Garage"],
+        "agent_name": "Agent Smith",
+        "agent_phone": "555-1234",
+        "agent_email": "agent@example.com",
+        "recipient_email": "recipient@test.com",
+    }
 
-    payload["recipient_email"] = "recipient@test.com"
-
-    with patch("app.routes.smtplib.SMTP"):
+    with patch("app_pkg.routes.smtplib.SMTP"):
         response = tester.post("/generate-flyer", json=payload)
 
     assert response.status_code == 200
@@ -45,7 +50,7 @@ def test_generate_flyer_defaults():
         "price": "$1",
     }
 
-    with patch("app.routes.smtplib.SMTP") as mock_smtp:
+    with patch("app_pkg.routes.smtplib.SMTP") as mock_smtp:
         response = tester.post("/generate-flyer", json=payload)
 
     assert response.status_code == 200
@@ -67,7 +72,7 @@ def test_generate_flyer_form_submission():
         "subject": "Test Subject",
     }
 
-    with patch("app.routes.smtplib.SMTP"):
+    with patch("app_pkg.routes.smtplib.SMTP"):
         response = tester.post("/generate-flyer", data=form_data)
 
     assert response.status_code == 200
