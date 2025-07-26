@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 # Ensure environment variables from a .env file are loaded
 load_dotenv()
 
-from . import app
+# ``app`` is defined in the top-level ``app.py`` module
+from app import app
 
 
 @app.route('/')
