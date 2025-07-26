@@ -1,6 +1,12 @@
 from flask import jsonify, request, render_template
 
-from .utils.mailer import send_flyer
+import os
+import smtplib
+from email.mime.text import MIMEText
+from dotenv import load_dotenv
+
+# Ensure environment variables from a .env file are loaded
+load_dotenv()
 
 from . import app
 
@@ -22,6 +28,8 @@ def generate_flyer():
     agent_phone = data.get('agent_phone', '')
     agent_email = data.get('agent_email', '')
 
+    recipient_email = data.get('recipient_email')
+
     # Render flyer using Jinja2
     html_body = render_template(
         'flyer_template.html',
@@ -33,9 +41,25 @@ def generate_flyer():
         agent_email=agent_email
     )
 
-    subject = f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
-    # Send the flyer silently using SMTP
-    send_flyer(subject, html_body)
+    subject = data.get('subject') or f"Beautiful Home in {address.split(',')[0]} – Don’t Miss Out!"
 
-    return jsonify({"subject": subject, "html_body": html_body})
+    try:
+        smtp_host = os.environ.get("SMTP_HOST")
+        smtp_port = int(os.environ.get("SMTP_PORT", 0))
+        smtp_email = os.environ.get("SMTP_EMAIL")
+        smtp_password = os.environ.get("SMTP_PASSWORD")
+
+        msg = MIMEText(html_body, "html")
+        msg["Subject"] = subject
+        msg["From"] = smtp_email
+        msg["To"] = recipient_email
+
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+            server.starttls()
+            server.login(smtp_email, smtp_password)
+            server.sendmail(smtp_email, [recipient_email], msg.as_string())
+
+        return jsonify({"status": "Email sent successfully", "subject": subject, "html_body": html_body}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
