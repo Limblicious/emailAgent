@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+    <title>Flyer Details</title>
+</head>
+<body>
+    <form method="post" action="/generate-flyer">
+        <label>Address:<br><input type="text" name="address" required></label><br>
+        <label>Price:<br><input type="text" name="price" required></label><br>
+        <label>Features:<br><textarea name="features" rows="5"></textarea></label><br>
+        <label>Agent Name:<br><input type="text" name="agent_name" required></label><br>
+        <label>Agent Phone:<br><input type="text" name="agent_phone"></label><br>
+        <label>Agent Email:<br><input type="email" name="agent_email" required></label><br>
+        <label>Recipient Email:<br><input type="email" name="recipient_email" required></label><br>
+        <button type="submit">Generate Flyer</button>
+    </form>
+</body>
+</html>

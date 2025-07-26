@@ -1,5 +1,14 @@
 {
-  "subject": "Test Email",
-  "recipient_email": "limblicious@gmail.com",
-  "html_body": "This is a test email from your Flask app."
+  "address": "123 Elm Street, San Jose, CA",
+  "price": "$950,000",
+  "features": [
+    "3 Bedrooms, 2 Bathrooms",
+    "Modern open kitchen",
+    "Large backyard with patio",
+    "Near Caltrain",
+    "Attached garage"
+  ],
+  "agent_name": "Jonathan Lee",
+  "agent_phone": "555-123-4567",
+  "agent_email": "jonathan@homes.com"
 }

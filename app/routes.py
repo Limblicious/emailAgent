@@ -13,7 +13,8 @@ from . import app
 
 @app.route('/')
 def index():
-    return jsonify({'message': 'Hello, World!'})
+    """Render the main flyer form."""
+    return render_template("form.html")
 
 
 @app.route('/flyer-form')
