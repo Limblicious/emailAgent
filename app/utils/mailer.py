@@ -1,13 +1,24 @@
 import smtplib
+import os
 from email.message import EmailMessage
 
 
-SMTP_HOST = "smtp.example.com"
-SMTP_PORT = 587
-SENDER_EMAIL = "noreply@example.com"
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PORT = os.getenv("SMTP_PORT")
+SMTP_EMAIL = os.getenv("SMTP_EMAIL")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+if not all([SMTP_HOST, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD]):
+    raise RuntimeError(
+        "Missing required SMTP configuration environment variables"
+    )
+
+SMTP_PORT = int(SMTP_PORT)
+
+SENDER_EMAIL = SMTP_EMAIL
 RECIPIENT_EMAIL = "recipient@example.com"
-USERNAME = "noreply@example.com"
-PASSWORD = "examplepassword"
+USERNAME = SMTP_EMAIL
+PASSWORD = SMTP_PASSWORD
 
 
 def send_flyer(subject: str, html_body: str) -> None:
